@@ -11,8 +11,10 @@ public class InputManager : MonoBehaviour
     float rotateInput;
 
     PlayerController playerController;
-    GameObject player;
-    
+    GameObject playerManager;
+
+    GameObject[] ovens;
+
 
     GameObject[] Ingredients;
 
@@ -23,8 +25,8 @@ public class InputManager : MonoBehaviour
 
     void Awake()
     {
-        player = GameObject.Find("Player");
-        playerController = player.GetComponent<PlayerController>();
+        playerManager = GameObject.Find("Player Manager");
+        playerController = playerManager.GetComponent<PlayerController>();
                
         
         
@@ -41,20 +43,19 @@ public class InputManager : MonoBehaviour
         playerController.Turn(rotateInput);
 
         Ingredients = GameObject.FindGameObjectsWithTag("Ingredients");
-
+        ovens = GameObject.FindGameObjectsWithTag("Oven");
     }
 
     private void Update()
-    {
-        
-            
-            if (Input.GetButtonDown("Fire1"))
-            {
-            Debug.Log("click");
-            // playerController.GrabIngr();
+    {     
+          
+        if (Input.GetButtonDown("Fire1"))
+        {
+        Debug.Log("click");
+        playerController.GrabIngr();
 
 
-
+            /*
             foreach (GameObject ingredient in Ingredients)
                 {           
                         
@@ -70,7 +71,25 @@ public class InputManager : MonoBehaviour
 
                 lastInputTime = Time.time;
 
+            }*/
+
+            foreach (GameObject oven in ovens)
+            {
+
+                OvenController ovenController = oven.GetComponent<OvenController>();
+
+                if (isRunning == false)
+                {
+                    Debug.Log("attach");
+                    isRunning = true;
+                    ovenController.AttachIngredient();
+                }
             }
+
+        lastInputTime = Time.time;
+
+        }
+
 
         if (Time.time - lastInputTime > intervalAction)
         {

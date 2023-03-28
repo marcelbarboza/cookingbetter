@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
     public float movementSpeed;
     public float rotationSpeed;
 
-    public GameObject body;
+    public GameObject player;
     Rigidbody rb;
 
     private bool isGrounded;
@@ -25,8 +25,7 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {        
-        rb = body.GetComponent<Rigidbody>();
-
+        rb = player.GetComponent<Rigidbody>();
     }
 
   
@@ -36,7 +35,7 @@ public class PlayerController : MonoBehaviour
     {
         
        
-        isGrounded = Physics.Raycast(body.transform.position, Vector3.down, 1f);
+        isGrounded = Physics.Raycast(player.transform.position, Vector3.down, 1f);
        
         CheckRaycast();
 
@@ -48,8 +47,8 @@ public class PlayerController : MonoBehaviour
 
     public void UpdateItemsHeld()
     {
-        bool ovenInReach = true;
-        if (TryGetGameItems(ovenInReach, out bool collidingWithIngredients))
+        
+        if (TryGetGameItems(out bool ovenInReach, out bool collidingWithIngredients))
         {
 
         }
@@ -64,7 +63,7 @@ public class PlayerController : MonoBehaviour
         return true;
     }
 
-    public bool TryGetGameItems(bool ovenInReach, out bool collidingWithIngredients)
+    public bool TryGetGameItems(out bool ovenInReach, out bool collidingWithIngredients)
     {
         bool foundIngredients = true;
         if (foundIngredients)
@@ -92,13 +91,37 @@ public class PlayerController : MonoBehaviour
         targetIngredient = null;
         targetOven = null;
 
-        RaycastHit hitIngredient, hitOven;
+        RaycastHit hitIngredient1, hitIngredient2, hitOven;
 
-        Debug.DrawRay(body.transform.position - new Vector3(0, 0.4f,0), body.transform.forward, Color.blue);
+        Debug.DrawRay(player.transform.position - new Vector3(0, 0.4f,0), player.transform.forward, Color.blue);
         
 
-        if(Physics.Raycast((body.transform.position), body.transform.forward, out hitOven, 5f, LayerMask.GetMask("Stuff")))
-        {            
+        
+        
+
+        if (Physics.Raycast(player.transform.position, player.transform.forward, out hitIngredient1, 2f))
+        {
+            if (hitIngredient1.collider.CompareTag("Ingredients"))
+            {
+                touchIngr = true;
+                targetIngredient = hitIngredient1.collider.gameObject;
+                Debug.Log("on target");
+                return targetIngredient;
+            }     
+        }
+        if (Physics.Raycast(player.transform.position + new Vector3(0f, 0.5f, 0f), player.transform.forward, out hitIngredient2, 2f))
+        {
+            if (hitIngredient2.collider.CompareTag("Ingredients"))
+            {
+                touchIngr = true;
+                targetIngredient = hitIngredient2.collider.gameObject;
+                Debug.Log("on target");
+                return targetIngredient;
+            }
+        }
+
+        if (Physics.Raycast((player.transform.position), player.transform.forward, out hitOven, 5f, LayerMask.GetMask("Stuff")))
+        {
             if (hitOven.collider.CompareTag("Oven"))
             {
                 //Debug.Log("inside");
@@ -106,20 +129,8 @@ public class PlayerController : MonoBehaviour
                 return targetOven;
             }
         }
-        
 
-        if (Physics.Raycast(body.transform.position, body.transform.forward, out hitIngredient, 1f))
-        {
-            if (hitIngredient.collider.CompareTag("Ingredients"))
-            {
-                touchIngr = true;
-                targetIngredient = hitIngredient.collider.gameObject;    
-                return targetIngredient;
-            }     
-
-        }
-
-       return null;
+        return null;
     }
     
 
@@ -141,7 +152,7 @@ public class PlayerController : MonoBehaviour
             if(moveInputZ != 0) 
             {
                    
-                Vector3 movingFoward = moveInputZ * ( body.transform.forward) * movementSpeed;
+                Vector3 movingFoward = moveInputZ * ( player.transform.forward) * movementSpeed;
 
                 Vector3 newMovement = new Vector3(movingFoward.x, rb.velocity.y, movingFoward.z);
 
@@ -181,12 +192,43 @@ public class PlayerController : MonoBehaviour
 
         if (holdingItem == true && targetIngredient != null)
         {
-           
+
             Destroy(targetIngredient.GetComponent<FixedJoint>());
-            
+
             holdingItem = false;
-            
+
         }
+
+        if (holdingItem == false && targetIngredient != null)
+        {
+            if (targetIngredient.GetComponent<FixedJoint>())
+            {
+                Destroy(targetIngredient.GetComponent<FixedJoint>());
+            }
+            
+            targetIngredient.transform.position = player.transform.position + player.transform.forward;
+            targetIngredient.transform.rotation = player.transform.rotation;
+
+            // transform.position = playerBody.transform.position + playerBody.transform.forward;
+            //  transform.rotation = player.transform.rotation;
+
+            
+            Rigidbody ingredientRb = targetIngredient.GetComponent<Rigidbody>();
+            ingredientRb.isKinematic = false;
+
+            if (targetIngredient.GetComponent<FixedJoint>() == null)
+            {
+                targetIngredient.AddComponent<FixedJoint>();
+            }
+
+            FixedJoint ingredientfj = targetIngredient.GetComponent<FixedJoint>();
+            ingredientfj.connectedBody = rb.GetComponent<Rigidbody>();
+
+            holdingItem = true;
+        }
+
+
+        
 
 
         
@@ -196,7 +238,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.DrawRay(body.transform.position, body.transform.forward * 50f);
+        Gizmos.DrawRay(player.transform.position, player.transform.forward * 50f);
     }
         
 }
