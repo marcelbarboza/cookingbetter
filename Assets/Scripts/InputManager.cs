@@ -26,10 +26,7 @@ public class InputManager : MonoBehaviour
     void Awake()
     {
         playerManager = GameObject.Find("Player Manager");
-        playerController = playerManager.GetComponent<PlayerController>();
-               
-        
-        
+        playerController = playerManager.GetComponent<PlayerController>();     
     }
 
     
@@ -44,6 +41,14 @@ public class InputManager : MonoBehaviour
 
         Ingredients = GameObject.FindGameObjectsWithTag("Ingredients");
         ovens = GameObject.FindGameObjectsWithTag("Oven");
+
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            playerController.PushBackTest();
+        }
+
+
     }
 
     private void Update()
@@ -51,7 +56,7 @@ public class InputManager : MonoBehaviour
           
         if (Input.GetButtonDown("Fire1"))
         {
-        Debug.Log("click");
+      //  Debug.Log("click");
         playerController.GrabIngr();
 
 
@@ -80,7 +85,7 @@ public class InputManager : MonoBehaviour
 
                 if (isRunning == false)
                 {
-                    Debug.Log("attach");
+                   // Debug.Log("attach");
                     isRunning = true;
                     ovenController.AttachIngredient();
                 }

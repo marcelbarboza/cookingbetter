@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
         isGrounded = Physics.Raycast(player.transform.position, Vector3.down, 1f);
        
         CheckRaycast();
-
+        PushBack(targetOven);
         //transform.position = body.transform.position;
        
     }
@@ -94,10 +94,6 @@ public class PlayerController : MonoBehaviour
         RaycastHit hitIngredient1, hitIngredient2, hitOven;
 
         Debug.DrawRay(player.transform.position - new Vector3(0, 0.4f,0), player.transform.forward, Color.blue);
-        
-
-        
-        
 
         if (Physics.Raycast(player.transform.position, player.transform.forward, out hitIngredient1, 2f))
         {
@@ -105,17 +101,18 @@ public class PlayerController : MonoBehaviour
             {
                 touchIngr = true;
                 targetIngredient = hitIngredient1.collider.gameObject;
-                Debug.Log("on target");
+               // Debug.Log("on target");
                 return targetIngredient;
             }     
         }
+
         if (Physics.Raycast(player.transform.position + new Vector3(0f, 0.5f, 0f), player.transform.forward, out hitIngredient2, 2f))
         {
             if (hitIngredient2.collider.CompareTag("Ingredients"))
             {
                 touchIngr = true;
                 targetIngredient = hitIngredient2.collider.gameObject;
-                Debug.Log("on target");
+              //  Debug.Log("on target");
                 return targetIngredient;
             }
         }
@@ -138,9 +135,13 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.M))
         {
-            Debug.Log(targetIngredient);
+           // Debug.Log(targetIngredient);
         }
-
+        
+        if (targetOven != null && Vector3.Distance(player.transform.position, targetOven.transform.position) < 5f)
+        {
+            Debug.Log("less than 1");
+        }
        
     }
 
@@ -196,8 +197,9 @@ public class PlayerController : MonoBehaviour
             Destroy(targetIngredient.GetComponent<FixedJoint>());
 
             holdingItem = false;
-
         }
+
+       // if(holdingItem == false && targetOven != null )
 
         if (holdingItem == false && targetIngredient != null)
         {
@@ -225,13 +227,36 @@ public class PlayerController : MonoBehaviour
             ingredientfj.connectedBody = rb.GetComponent<Rigidbody>();
 
             holdingItem = true;
+        }   
+
+
+        
+    }
+
+    void PushBack(GameObject targetOven)
+    {
+        if(targetOven == null)
+        {           
+            return;
         }
+        if(Vector3.Distance(player.transform.position, targetOven.transform.position) < 1f && holdingItem)
+        {
+            Debug.Log("pushback");
 
+            OvenController oc = targetOven.GetComponent<OvenController>();
+            rb.AddForce(-Vector3.forward * 5f, ForceMode.Impulse);
+            if (oc.onOven)
+            {
+                
+            }
+        }
+    }
 
+   public void PushBackTest()
+    {
+        Debug.Log("pushback M");
         
-
-
-        
+        rb.AddForce(-Vector3.forward * 5f, ForceMode.Impulse);
     }
 
 

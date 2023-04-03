@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 using UnityEngine;
 
 public class IngredientController : MonoBehaviour
@@ -52,7 +53,7 @@ public class IngredientController : MonoBehaviour
         if(collision.collider.CompareTag("Oven"))
         {
 
-           Debug.Log("colliding with oven");
+         //  Debug.Log("colliding with oven");
           //  IsCooking = true;
             isTouchingOven = true;
             touchingWhat = collision.gameObject;
@@ -64,8 +65,12 @@ public class IngredientController : MonoBehaviour
             isTouchingPlayer = true;
         }
 
+        
 
     }
+
+
+    
 
     private void OnCollisionExit(Collision collision)
     {
