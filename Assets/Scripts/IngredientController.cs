@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
@@ -23,6 +24,8 @@ public class IngredientController : MonoBehaviour
 
     float intervalAction = 3f;
     float lastInputTime = 0f;
+    
+    public delegate void CookingEvent(object sender, EventArgs e);
 
 
     private void Awake()
