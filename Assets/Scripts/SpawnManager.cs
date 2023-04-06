@@ -5,20 +5,14 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
-{
-    public GameObject[] ingredients;
-    
+{    
     private int ingredientsCount;
     public int maxIngredients;
-
-    
-    
 
     GameObject boxTomato;
     GameObject boxCucumber;
 
-    List<GameObject> newIngredients;
-
+    List<GameObject> ingredients;
 
     public Mesh[] meshs;
     public Material[] materials;
@@ -28,15 +22,17 @@ public class SpawnManager : MonoBehaviour
         boxTomato = GameObject.Find("boxTomato");
         boxCucumber = GameObject.Find("boxCucumber");
 
-        newIngredients = new List<GameObject>();
+        ingredients = new List<GameObject>();
     }
 
     private void Start()
     {
         
         ingredientsCount = 0;
-        StartCoroutine(SpawnIngredient("tomato", maxIngredients));
-        StartCoroutine(SpawnIngredient("cucumber", maxIngredients));
+      //  StartCoroutine(SpawnIngredient("tomato", maxIngredients));
+       // StartCoroutine(SpawnIngredient("cucumber", maxIngredients));
+        StartCoroutine(SpawnIngredientPROPERLY_DONE_M8("cucumber", meshs[1], materials[1], maxIngredients, 10f, boxCucumber));
+        StartCoroutine(SpawnIngredientPROPERLY_DONE_M8("tomato", meshs[0], materials[0], maxIngredients, 15f, boxTomato));
     }
 
     // Update is called once per frame
@@ -105,7 +101,7 @@ public class SpawnManager : MonoBehaviour
            
             newIngr.AddComponent<IngredientController>();
 
-            newIngredients.Add(newIngr);
+            ingredients.Add(newIngr);
         }
     }
 
@@ -134,7 +130,7 @@ public class SpawnManager : MonoBehaviour
 
                 newIngr.AddComponent<IngredientController>();
 
-                newIngredients.Add(newIngr);
+                ingredients.Add(newIngr);
 
                 yield return new WaitForSeconds(1f);
 
@@ -163,7 +159,7 @@ public class SpawnManager : MonoBehaviour
 
                 newIngr.AddComponent<IngredientController>();
 
-                newIngredients.Add(newIngr);
+                ingredients.Add(newIngr);
 
                 yield return new WaitForSeconds(1f);
 
@@ -171,5 +167,39 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    IEnumerator SpawnIngredientPROPERLY_DONE_M8(string name, Mesh mesh, Material material, int amount, float cookingDuration, GameObject spawnObject)
+    {
 
+        yield return new WaitForSeconds(1f);
+
+        for (int i = 0; i < amount; i++)
+        {
+
+            GameObject ingredient = new GameObject(name);
+            MeshFilter meshFilter = ingredient.AddComponent<MeshFilter>();
+            MeshRenderer meshRenderer = ingredient.AddComponent<MeshRenderer>();
+            Rigidbody rb = ingredient.AddComponent<Rigidbody>();
+            IngredientController ingredientController = ingredient.AddComponent<IngredientController>();
+
+
+            ingredient.AddComponent<BoxCollider>();
+
+            ingredientController.cookingDuration = cookingDuration;
+
+
+            meshFilter.mesh = mesh;    
+            meshRenderer.material = material;
+            
+            ingredient.transform.position = spawnObject.transform.position + new Vector3(0f, 2f, 0f) + UnityEngine.Random.onUnitSphere;
+
+            rb.mass = 0.01f;
+
+            ingredient.tag = "Ingredients";
+
+            ingredients.Add(ingredient);
+
+            yield return new WaitForSeconds(1f);
+
+        }
+    }
 }

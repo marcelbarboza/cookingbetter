@@ -22,6 +22,28 @@ public class CookingTimeBar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-      
+        
+        if(ovenController.IngredientCooking == null) { return; }
+        IngredientController CookingObject = ovenController.IngredientCooking.GetComponent<IngredientController>();
+            
+
+       // SetSliderValue(CookingObject.cookingDuration);
+        ChangeSliderValue(CookingObject.howCooked);
+
+
+        if (ovenController.onOven)
+        {
+
+        }
+    }
+
+    void SetSliderValue(float cookingDuration) 
+    {
+        slider.maxValue = cookingDuration;
+    }
+
+    void ChangeSliderValue(float howCooked)
+    {
+        slider.value = howCooked;
     }
 }

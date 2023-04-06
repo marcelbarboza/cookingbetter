@@ -6,14 +6,14 @@ using UnityEngine;
 
 public class IngredientController : MonoBehaviour
 {
-    Material material;
-    Color colorStart;
-    Color colorEnd;
+    public Material material;
+    public Color colorStart;
+
 
     private bool IsCooking;
     private bool isTouchingOven;
     private bool isTouchingPlayer;
-    float timeElapsed;
+    
 
     GameObject player;
     GameObject playerBody;
@@ -24,8 +24,14 @@ public class IngredientController : MonoBehaviour
 
     float intervalAction = 3f;
     float lastInputTime = 0f;
-    
+
     public delegate void CookingEvent(object sender, EventArgs e);
+    
+    public float cookingDuration { get; set; }
+    public float howCooked { get; set; }
+    public float cookedTime { get; set; }
+    public float timeElapsed { get; set; }
+
 
 
     private void Awake()
@@ -36,42 +42,52 @@ public class IngredientController : MonoBehaviour
     }
 
     private void Start()
-    {        
-        material = GetComponent <MeshRenderer>().material;
-        
+    {
+        material = GetComponent<MeshRenderer>().material;
+
         colorStart = material.color;
 
         IsCooking = false;
-        timeElapsed = 0f;
+        
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
-        CookingIngredient(IsCooking, gameObject.name);
-       // AddOrRemoveParent();
+        //  CookingIngredient(IsCooking, gameObject);
+        // AddOrRemoveParent();
+        HowCooked();
+        
+    }
+
+    public float HowCooked()
+    {
+        return howCooked = Mathf.Lerp(0, cookedTime, cookingDuration);
+        
     }
 
     private void OnCollisionEnter(Collision collision)
-    {    
-        if(collision.collider.CompareTag("Oven"))
+    {
+        if (collision.collider.CompareTag("Oven"))
         {
 
-         //  Debug.Log("colliding with oven");
-          //  IsCooking = true;
+            //  Debug.Log("colliding with oven");
+            //  IsCooking = true;
             isTouchingOven = true;
             touchingWhat = collision.gameObject;
         }
-        
+
 
         if (collision.collider.CompareTag("Player"))
         {
             isTouchingPlayer = true;
         }
-
-        
-
     }
 
+    public Material Material
+    {
+        get { return GetComponent<MeshRenderer>().material; }
+        set { GetComponent<MeshRenderer>().material = value; }
+    }
 
     
 
@@ -86,25 +102,25 @@ public class IngredientController : MonoBehaviour
 
 
 
-    private void CookingIngredient(bool isCooking, string Ingredient) 
-    {
-        if (isCooking && gameObject.name == "tomato") {
-            timeElapsed += Time.deltaTime;
-            float duration = 5f;
-            float t = timeElapsed / duration;            
+    //public void CookingIngredient(bool isCooking, GameObject Ingredient) 
+    //{
+    //    if (isCooking && Ingredient.name == "tomato") {
+    //        timeElapsed += Time.deltaTime;
+    //        float duration = 15f;
+    //        float t = timeElapsed / duration;            
 
-            material.color = Color.Lerp(colorStart, Color.black, t);
-        }
+    //        material.color = Color.Lerp(colorStart, Color.black, t);
+    //    }
 
-        if (isCooking && gameObject.name == "cucumber")
-        {
-            timeElapsed += Time.deltaTime;
-            float duration = 10f;
-            float t = timeElapsed / duration;
+    //    if (isCooking && Ingredient.name == "cucumber")
+    //    {
+    //        timeElapsed += Time.deltaTime;
+    //        float duration = 10f;
+    //        float t = timeElapsed / duration;
 
-            material.color = Color.Lerp(colorStart, Color.black, t);
-        }
-    }
+    //        material.color = Color.Lerp(colorStart, Color.black, t);
+    //    }
+    //}
 
     private void AddJoint()
     {
@@ -114,6 +130,12 @@ public class IngredientController : MonoBehaviour
             joint.breakForce = 10f;
         }
     }
+
+    /*public float CookingDuration
+    {
+        get { return CookingDuration; }
+        set { CookingDuration; }
+    }*/
 
 
     public void Attach()
