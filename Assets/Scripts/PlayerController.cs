@@ -21,7 +21,8 @@ public class PlayerController : MonoBehaviour
 
     public Transform cam;
 
-    
+    float turnSmoothVelocity;
+    public float turnSmoothTime = 0.1f;
 
     void Awake()
     {        
@@ -170,9 +171,35 @@ public class PlayerController : MonoBehaviour
 
             void LocalFunction() { }
 
-            
+
 
         }
+
+
+    }
+
+    public void TouchMove(float StickHorizontal, float StickVertical)
+    {
+        
+         Vector3 direction = Vector3.forward * StickVertical + Vector3.right * StickHorizontal;
+        //Debug.Log("direction" + direction);
+
+        if (direction.magnitude > 0.1f)
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            rb.MoveRotation(lookRotation);
+        }
+
+
+        rb.AddForce(direction * movementSpeed * Time.deltaTime, ForceMode.VelocityChange);
+        
+
+        if(StickHorizontal == 0 && StickHorizontal == 0)
+        {
+            rb.velocity = Vector3.zero;
+        }
+
+        
     }
 
     public void Turn(float rotateInput)

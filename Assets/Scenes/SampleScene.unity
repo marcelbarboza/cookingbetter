@@ -2950,6 +2950,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f5a208e643acf0479308db8f29ce602, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  variableJoystick: {fileID: 0}
 --- !u!1 &1967787058
 GameObject:
   m_ObjectHideFlags: 0
@@ -3140,7 +3141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff78d5bafd484f14286efb6164680b3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 5
+  movementSpeed: 25
   rotationSpeed: 5
   player: {fileID: 1446721993}
   holdingItem: 0
@@ -3148,6 +3149,7 @@ MonoBehaviour:
   targetIngredient: {fileID: 0}
   targetOven: {fileID: 0}
   cam: {fileID: 0}
+  turnSmoothTime: 0.1
 --- !u!1 &2126102992
 GameObject:
   m_ObjectHideFlags: 0
